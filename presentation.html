@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best Practices in Deploying AI at Scale</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reset.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/theme/white.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/monokai.css">
+    
+    <style>
+        .reveal h1, .reveal h2, .reveal h3 {
+            color: #2c3e50;
+        }
+        .reveal .progress {
+            color: #2c3e50;
+        }
+        .two-column {
+            display: flex;
+            justify-content: space-between;
+        }
+        .column {
+            flex: 1;
+            padding: 0 20px;
+        }
+        .highlight-box {
+            background: #f0f7ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        .warning-box {
+            background: #fff5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #e74c3c;
+        }
+        .success-box {
+            background: #f0fff4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #27ae60;
+        }
+        .code-small {
+            font-size: 0.8em !important;
+        }
+        .level-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .level-basic {
+            background: #d4edda;
+            color: #155724;
+        }
+        .level-intermediate {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .level-advanced {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .resource-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .resource-link:hover {
+            background: #2980b9;
+        }
+        .slide-number {
+            color: #2c3e50 !important;
+        }
+        table {
+            margin: 0 auto;
+            font-size: 0.9em;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+        }
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            
+            <!-- Title Slide -->
+            <section>
+                <h1>Best Practices in Deploying AI at Scale</h1>
+                <h3>A Practical Workshop on S3IT Infrastructure</h3>
+                <p style="margin-top: 50px;">
+                    <small>University of Zurich<br>
+                    Colin Henry, PhD <br>
+                    Maël Kubli, PhD</small>
+                </p>
+                <!-- <p style="margin-top: 30px;">
+                    <small>Duration: 45 minutes + Q&A</small>
+                </p> -->
+            </section>
+
+            <!-- Agenda -->
+            <section>
+                <h2>Workshop Agenda</h2>
+                <div style="text-align: left; margin: 0 auto; width: 80%;">
+                    <p>📚 <strong>Intro to S3IT Services</strong></p>
+                    <p>🔄 <strong>Research Workflow Overview</strong></p>
+                    <p>💻 <strong>Hands-on Demonstration</strong></p>
+                    <p>📦 <strong>Resources & Recipes</strong></p>
+                    <p>❓ <strong>Q&A Session</strong></p>
+                </div>
+            </section>
+
+            <!-- Section 1: Primer on S3IT Services -->
+            <section>
+                <section>
+                    <h2>Part 1: Intro to S3IT Services</h2>
+                    <p style="font-size: 1.2em;">Understanding Your Computing Options at UZH</p>
+                </section>
+
+                <section>
+                    <h2>What is S3IT?</h2>
+                    <div class="highlight-box">
+                        <p><strong>Science IT (S3IT)</strong> provides computational infrastructure for research at UZH</p>
+                    </div>
+                    <div class="two-column" style="margin-top: 40px;">
+                        <div class="column">
+                            <h3>🖥️ ScienceCluster</h3>
+                            <ul>
+                                <li>HPC environment</li>
+                                <li>Batch job processing</li>
+                                <li>GPU acceleration</li>
+                                <li>Large-scale computing</li>
+                            </ul>
+                        </div>
+                        <div class="column">
+                            <h3>☁️ ScienceCloud</h3>
+                            <ul>
+                                <li>Virtual machines (VMs)</li>
+                                <li>Interactive development</li>
+                                <li>Custom environments</li>
+                                <li>Persistent services</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>When to Use What?</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Use Case</th>
+                                <th>ScienceCluster</th>
+                                <th>ScienceCloud</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Training large models</td>
+                                <td>✅ Preferred</td>
+                                <td>✓ Possible</td>
+                            </tr>
+                            <tr>
+                                <td>Interactive development</td>
+                                <td>✓ Via ScienceApps</td>
+                                <td>✅ Preferred</td>
+                            </tr>
+                            <tr>
+                                <td>Long-running services</td>
+                                <td>❌ Not suitable</td>
+                                <td>✅ Preferred</td>
+                            </tr>
+                            <tr>
+                                <td>Batch processing</td>
+                                <td>✅ Preferred</td>
+                                <td>✓ Possible</td>
+                            </tr>
+                            <tr>
+                                <td>Custom software stack</td>
+                                <td>✓ Via containers</td>
+                                <td>✅ Full control</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h2>Getting Access - Step by Step</h2>
+                    <div class="highlight-box">
+                        <h3>1️⃣ Check Eligibility</h3>
+                        <p>✓ UZH affiliation (student, staff, researcher)</p>
+                        <p>✓ Valid UZH shortname and AD password</p>
+                    </div>
+                    <div class="highlight-box">
+                        <h3>2️⃣ Request Access</h3>
+                        <p>Visit: <a href="https://www.zi.uzh.ch/en/teaching-and-research/science-it.html">S3IT Website</a></p>
+                        <p>Fill out the access request form</p>
+                        <p>Specify your research needs</p>
+                    </div>
+                    <div class="highlight-box">
+                        <h3>3️⃣ Wait for Approval</h3>
+                        <p>Usually 1-2 business days</p>
+                        <p>You'll receive credentials via email</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Common Entry Hurdles (and Solutions)</h2>
+                    <div class="warning-box">
+                        <h4>🔐 VPN Required</h4>
+                        <p>Both services require UZH VPN when off-campus</p>
+                        <p><small>Solution: Install UZH VPN client first</small></p>
+                    </div>
+                    <div class="warning-box">
+                        <h4>💾 Storage Quotas</h4>
+                        <p>Default quotas may be insufficient for ML workloads</p>
+                        <p><small>Solution: Request increase via support ticket</small></p>
+                    </div>
+                    <div class="warning-box">
+                        <h4>🎮 GPU Access</h4>
+                        <p>GPU resources require special approval</p>
+                        <p><small>Solution: Justify need in initial request</small></p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Accessing ScienceCluster</h2>
+                    <pre><code class="language-bash"># From terminal (on VPN or campus network)
+ssh -l your_shortname cluster.s3it.uzh.ch
+
+# Enter your AD password when prompted</code></pre>
+                    
+                    <div class="highlight-box" style="margin-top: 30px;">
+                        <h4>🌐 Browser Access via ScienceApps</h4>
+                        <p>Visit: <a href="https://apps.s3it.uzh.ch">https://apps.s3it.uzh.ch</a></p>
+                        <p>Access Jupyter, RStudio, VSCode in browser!</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Accessing ScienceCloud</h2>
+                    <div class="highlight-box">
+                        <h4>🌐 Web Interface</h4>
+                        <p>Visit: <a href="https://cloud.science-it.uzh.ch">https://cloud.science-it.uzh.ch</a></p>
+                        <p>Login with:</p>
+                        <ul>
+                            <li>Username: Your UZH shortname</li>
+                            <li>Password: Your AD password</li>
+                            <li>Domain: UZH</li>
+                        </ul>
+                    </div>
+                    <p style="margin-top: 30px;"><small>💡 Tip: Bookmark this URL - you'll use it often!</small></p>
+                </section>
+            </section>
+
+            <!-- Section 2: Research Workflow -->
+            <section>
+                <section>
+                    <h2>Part 2: Typical Research Workflow</h2>
+                    <p style="font-size: 1.2em;">From Data to Deployment</p>
+                </section>
+
+                <section>
+                    <h2>The ML/AI Research Pipeline</h2>
+                    <div style="text-align: left; margin: 0 auto;">
+                        <div class="highlight-box">
+                            <h4>1. 📥 Data Storage & Ingestion</h4>
+                            <ul>
+                                <li>Transfer data via SCP/SFTP</li>
+                                <li>Use shared storage for team projects</li>
+                                <li>Consider cold storage for archives</li>
+                            </ul>
+                        </div>
+                        <div class="highlight-box">
+                            <h4>2. 🔧 Preprocessing</h4>
+                            <ul>
+                                <li>Set up Python/R environments</li>
+                                <li>Use containers for reproducibility</li>
+                                <li>Clean and prepare datasets</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>The ML/AI Research Pipeline (cont'd)</h2>
+                    <div style="text-align: left; margin: 0 auto;">
+                        <div class="highlight-box">
+                            <h4>3. 🤖 Model Training</h4>
+                            <ul>
+                                <li>Fine-tune LLMs on GPUs</li>
+                                <li>Run experiments in parallel</li>
+                                <li>Track experiments (MLflow, Weights & Biases)</li>
+                            </ul>
+                        </div>
+                        <div class="highlight-box">
+                            <h4>4. 🚀 Deployment & Sharing</h4>
+                            <ul>
+                                <li>Deploy models as APIs</li>
+                                <li>Share notebooks and results</li>
+                                <li>Create reproducible artifacts</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Real Example: Fine-tuning an LLM</h2>
+                    <pre><code class="language-bash code-small"># 1. Connect to cluster
+ssh -l shortname cluster.s3it.uzh.ch
+
+# 2. Load required modules
+module load python/3.10
+module load cuda/11.8
+
+# 3. Create virtual environment
+python -m venv llm_env
+source llm_env/bin/activate
+
+# 4. Install dependencies
+pip install torch transformers datasets
+
+# 5. Submit training job
+sbatch train_llm.sh</code></pre>
+                    <p style="margin-top: 20px;"><small>We'll dive deeper into this in the hands-on section!</small></p>
+                </section>
+            </section>
+
+            <!-- Section 3: Hands-on Demonstration -->
+            <section>
+                <section>
+                    <h2>Part 3: Hands-on Demonstration</h2>
+                    <p style="font-size: 1.2em;">Three Levels of Complexity</p>
+                    <div style="margin-top: 40px;">
+                        <span class="level-indicator level-basic">Level 1: Basic</span>
+                        <span class="level-indicator level-intermediate">Level 2: Intermediate</span>
+                        <span class="level-indicator level-advanced">Level 3: Advanced</span>
+                    </div>
+                </section>
+
+                <!-- Level 1: Basic -->
+                <section>
+                    <h2><span class="level-indicator level-basic">Level 1: Basic</span></h2>
+                    <h3>Launching Pre-configured Environments</h3>
+                    <p>Goal: Get started quickly without dependency management</p>
+                </section>
+
+                <section>
+                    <h3>Option A: Using ScienceApps (Easiest!)</h3>
+                    <div class="success-box">
+                        <ol>
+                            <li>Navigate to <a href="https://apps.s3it.uzh.ch">apps.s3it.uzh.ch</a></li>
+                            <li>Login with UZH credentials</li>
+                            <li>Choose an application:
+                                <ul>
+                                    <li>JupyterLab (Python/R notebooks)</li>
+                                    <li>RStudio (R development)</li>
+                                    <li>VSCode (general coding)</li>
+                                </ul>
+                            </li>
+                            <li>Select resources (CPU, RAM)</li>
+                            <li>Click "Start"</li>
+                        </ol>
+                    </div>
+                    <p style="margin-top: 20px;">✨ <strong>Result:</strong> Full IDE in your browser in 30 seconds!</p>
+                </section>
+
+                <section>
+                    <h3>Option B: Using Docker Containers</h3>
+                    <pre><code class="language-bash"># On ScienceCluster
+module load singularity
+
+# Pull a pre-built ML container
+singularity pull docker://tensorflow/tensorflow:latest-gpu
+
+# Run interactive session
+singularity shell --nv tensorflow_latest-gpu.sif
+
+# Now you have TensorFlow ready to use!</code></pre>
+                    <div class="highlight-box" style="margin-top: 20px;">
+                        <p><strong>Popular Pre-built Containers:</strong></p>
+                        <ul>
+                            <li>tensorflow/tensorflow</li>
+                            <li>pytorch/pytorch</li>
+                            <li>huggingface/transformers-pytorch-gpu</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Option C: Cloud VM from Template</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Steps in ScienceCloud:</h4>
+                            <ol>
+                                <li>Go to "Instances"</li>
+                                <li>Click "Launch Instance"</li>
+                                <li>Choose from templates:
+                                    <ul>
+                                        <li>Ubuntu + CUDA</li>
+                                        <li>Data Science Stack</li>
+                                        <li>Deep Learning AMI</li>
+                                    </ul>
+                                </li>
+                                <li>Select flavor (size)</li>
+                                <li>Launch!</li>
+                            </ol>
+                        </div>
+                        <div class="column">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YwZjBmMCIvPgogIDx0ZXh0IHg9IjE1MCIgeT0iMzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzMzMyI+U2NpZW5jZUNsb3VkIERhc2hib2FyZDwvdGV4dD4KICA8cmVjdCB4PSIyMCIgeT0iNTAiIHdpZHRoPSIyNjAiIGhlaWdodD0iNDAiIGZpbGw9IiMzNDk4ZGIiIHJ4PSI1Ii8+CiAgPHRleHQgeD0iMTUwIiB5PSI3NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TGF1bmNoIEluc3RhbmNlPC90ZXh0PgogIDxyZWN0IHg9IjIwIiB5PSIxMTAiIHdpZHRoPSIyNjAiIGhlaWdodD0iNjAiIGZpbGw9IndoaXRlIiBzdHJva2U9IiNkZGQiIHN0cm9rZS13aWR0aD0iMiIgcng9IjUiLz4KICA8dGV4dCB4PSIzMCIgeT0iMTM1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMzMzMiPuKcrCBVYnVudHUgMjIuMDQgKyBDVURBPC90ZXh0PgogIDx0ZXh0IHg9IjMwIiB5PSIxNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzMzMyI+4oaSIERhdGEgU2NpZW5jZSBTdGFjazwvdGV4dD4KICA8cmVjdCB4PSIyMCIgeT0iMTkwIiB3aWR0aD0iMjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjZjBmN2ZmIiBzdHJva2U9IiMzNDk4ZGIiIHN0cm9rZS13aWR0aD0iMiIgcng9IjUiLz4KICA8dGV4dCB4PSIzMCIgeT0iMjE1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMzMzMiPkZsYXZvcjogbTEubGFyZ2UgKDQgdkNQVSwgOEdCKTwvdGV4dD4KICA8dGV4dCB4PSIzMCIgeT0iMjM1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMzMzMiPkRpc2s6IDEwMCBHQjwvdGV4dD4KICA8cmVjdCB4PSI5MCIgeT0iMjgwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMjdhZTYwIiByeD0iNSIvPgogIDx0ZXh0IHg9IjE1MCIgeT0iMzA1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IndoaXRlIj5MYXVuY2g8L3RleHQ+Cjwvc3ZnPg==" alt="ScienceCloud Interface" style="max-width: 100%; border: 1px solid #ddd; border-radius: 5px;">
+                            <p><small>ScienceCloud Interface</small></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Level 2: Intermediate -->
+                <section>
+                    <h2><span class="level-indicator level-intermediate">Level 2: Intermediate</span></h2>
+                    <h3>Storage, Notebooks, and Small ML Tasks</h3>
+                    <p>Goal: Run actual experiments with your data</p>
+                </section>
+
+                <section>
+                    <h3>Step 1: Attach Storage</h3>
+                    <pre><code class="language-bash code-small"># On ScienceCluster - your home directory
+cd ~
+# Limited to 100GB by default
+
+# Project storage (request via ticket)
+cd /srv/beegfs/projects/your_project/
+
+# Scratch space for temporary large files
+cd /srv/beegfs/scratch/users/your_username/
+
+# Check your quotas
+quota -s</code></pre>
+                    
+                    <div class="warning-box" style="margin-top: 20px;">
+                        <p><strong>⚠️ Important:</strong> Scratch is NOT backed up! Use for temporary computation only.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Step 2: Transfer Your Data</h3>
+                    <pre><code class="language-bash code-small"># From your local machine
+scp -r my_dataset/ shortname@cluster.s3it.uzh.ch:~/data/
+
+# For large transfers, use rsync
+rsync -avz --progress my_dataset/ shortname@cluster.s3it.uzh.ch:~/data/
+
+# From cloud storage (e.g., from Google Drive using rclone)
+module load rclone
+rclone copy gdrive:my_dataset ~/data/</code></pre>
+                    
+                    <div class="highlight-box" style="margin-top: 20px;">
+                        <p><strong>💡 Pro tip:</strong> For datasets &gt;10GB, consider using screen or tmux for uninterrupted transfers</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Step 3: Launch Jupyter with GPU</h3>
+                    <h4>Via ScienceApps (Recommended):</h4>
+                    <div class="success-box">
+                        <ol>
+                            <li>Go to apps.s3it.uzh.ch</li>
+                            <li>Select "JupyterLab"</li>
+                            <li>Under resources, select "GPU: 1"</li>
+                            <li>Click "Start"</li>
+                        </ol>
+                    </div>
+                    
+                    <h4 style="margin-top: 30px;">Via Command Line:</h4>
+                    <pre><code class="language-bash code-small"># Request interactive GPU session
+srun --gpus=1 --mem=16G --time=04:00:00 --pty bash
+
+# Load modules and start Jupyter
+module load python/3.10 cuda/11.8
+jupyter lab --no-browser --port=8889
+
+# In another terminal, create SSH tunnel
+ssh -N -L 8889:localhost:8889 shortname@cluster.s3it.uzh.ch</code></pre>
+                </section>
+
+                <section>
+                    <h3>Step 4: Run a Small ML Task</h3>
+                    <pre><code class="language-python code-small"># In Jupyter notebook
+import torch
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from datasets import load_dataset
+
+# Check GPU availability
+print(f"GPU Available: {torch.cuda.is_available()}")
+print(f"GPU Name: {torch.cuda.get_device_name(0)}")
+
+# Load a small model
+model_name = "distilbert-base-uncased"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForSequenceClassification.from_pretrained(model_name)
+
+# Move to GPU
+model = model.cuda()
+
+# Load sample data
+dataset = load_dataset("imdb", split="test[:100]")
+
+# Simple inference
+def classify(text):
+    inputs = tokenizer(text, return_tensors="pt", truncation=True).to("cuda")
+    with torch.no_grad():
+        outputs = model(**inputs)
+    return torch.nn.functional.softmax(outputs.logits, dim=-1)
+
+# Test it
+result = classify("This movie was absolutely fantastic!")
+print(f"Positive: {result[0][1]:.2%}, Negative: {result[0][0]:.2%}")</code></pre>
+                </section>
+
+                <section>
+                    <h3>Monitoring Your Jobs</h3>
+                    <pre><code class="language-bash code-small"># Check GPU usage
+nvidia-smi
+
+# Monitor in real-time
+watch -n 1 nvidia-smi
+
+# Check your running jobs
+squeue -u $USER
+
+# Check job details
+scontrol show job &lt;jobid&gt;
+
+# Cancel a job if needed
+scancel &lt;jobid&gt;</code></pre>
+                    
+                    <div class="highlight-box" style="margin-top: 20px;">
+                        <p><strong>Resource Monitoring Dashboard</strong></p>
+                        <p>Coming soon: Web-based monitoring at <a href="#">monitor.s3it.uzh.ch</a></p>
+                    </div>
+                </section>
+
+                <!-- Level 3: Advanced -->
+                <section>
+                    <h2><span class="level-indicator level-advanced">Level 3: Advanced Peek</span></h2>
+                    <h3>Scaling Up: Job Arrays and Multi-GPU</h3>
+                    <p>Goal: Run production workloads efficiently</p>
+                </section>
+
+                <section>
+                    <h3>Job Arrays for Hyperparameter Tuning</h3>
+                    <pre><code class="language-bash code-small">#!/bin/bash
+#SBATCH --job-name=hp_search
+#SBATCH --array=1-20%5  # 20 jobs, max 5 concurrent
+#SBATCH --gpus=1
+#SBATCH --mem=32G
+#SBATCH --time=12:00:00
+#SBATCH --output=logs/hp_%A_%a.out
+
+# Each array task gets different hyperparameters
+LEARNING_RATES=(1e-5 5e-5 1e-4 5e-4 1e-3)
+BATCH_SIZES=(8 16 32 64)
+
+LR_INDEX=$(($SLURM_ARRAY_TASK_ID / 4))
+BS_INDEX=$(($SLURM_ARRAY_TASK_ID % 4))
+
+LR=${LEARNING_RATES[$LR_INDEX]}
+BS=${BATCH_SIZES[$BS_INDEX]}
+
+echo "Running with LR=$LR, BS=$BS"
+
+python train.py \
+    --learning_rate $LR \
+    --batch_size $BS \
+    --output_dir results/lr${LR}_bs${BS}/</code></pre>
+                    <p style="margin-top: 20px;"><small>This runs 20 experiments with different hyperparameter combinations!</small></p>
+                </section>
+
+                <section>
+                    <h3>Multi-GPU Training with PyTorch</h3>
+                    <pre><code class="language-python code-small"># train_multi_gpu.py
+import torch
+import torch.nn as nn
+from torch.nn.parallel import DataParallel, DistributedDataParallel
+import torch.distributed as dist
+import os
+
+def setup(rank, world_size):
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '12355'
+    dist.init_process_group("nccl", rank=rank, world_size=world_size)
+
+def train(rank, world_size):
+    setup(rank, world_size)
+    
+    # Create model and move to GPU
+    model = YourModel().to(rank)
+    model = DistributedDataParallel(model, device_ids=[rank])
+    
+    # Training loop
+    for epoch in range(num_epochs):
+        # Your training code here
+        pass
+    
+    dist.destroy_process_group()
+
+if __name__ == "__main__":
+    world_size = torch.cuda.device_count()
+    torch.multiprocessing.spawn(
+        train,
+        args=(world_size,),
+        nprocs=world_size,
+        join=True
+    )</code></pre>
+                </section>
+
+                <section>
+                    <h3>SLURM Script for Multi-GPU</h3>
+                    <pre><code class="language-bash code-small">#!/bin/bash
+#SBATCH --job-name=multi_gpu_training
+#SBATCH --nodes=1
+#SBATCH --gpus=4  # Request 4 GPUs
+#SBATCH --mem=128G
+#SBATCH --time=24:00:00
+#SBATCH --output=multi_gpu_%j.out
+
+module load python/3.10 cuda/11.8
+
+# Activate your environment
+source ~/envs/ml_env/bin/activate
+
+# Run distributed training
+python -m torch.distributed.launch \
+    --nproc_per_node=4 \
+    train_multi_gpu.py \
+    --model_name gpt2 \
+    --dataset_path /srv/beegfs/projects/nlp/data/ \
+    --output_dir ./results/</code></pre>
+                </section>
+
+                <section>
+                    <h3>Container-based Workflow</h3>
+                    <h4>Create a Custom Container:</h4>
+                    <pre><code class="language-docker code-small"># Dockerfile
+FROM pytorch/pytorch:2.0.1-cuda11.8-cudnn8-runtime
+
+# Install additional packages
+RUN pip install transformers datasets accelerate wandb
+
+# Copy your code
+COPY . /workspace
+WORKDIR /workspace
+
+# Set entrypoint
+CMD ["python", "train.py"]</code></pre>
+                    
+                    <h4 style="margin-top: 20px;">Build and Run:</h4>
+                    <pre><code class="language-bash code-small"># Build locally and push to registry
+docker build -t myproject:latest .
+docker tag myproject:latest registry.uzh.ch/yourname/myproject:latest
+docker push registry.uzh.ch/yourname/myproject:latest
+
+# On cluster, pull and run with Singularity
+singularity pull docker://registry.uzh.ch/yourname/myproject:latest
+singularity exec --nv myproject_latest.sif python train.py</code></pre>
+                </section>
+
+                <section>
+                    <h3>Advanced: Deploying Model as API</h3>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>On ScienceCloud VM:</h4>
+                            <pre><code class="language-python code-small"># app.py
+from flask import Flask, request
+from transformers import pipeline
+
+app = Flask(__name__)
+model = pipeline("sentiment-analysis")
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    text = request.json["text"]
+    result = model(text)
+    return {"result": result}
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)</code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>Deployment Steps:</h4>
+                            <ol>
+                                <li>Create VM with public IP</li>
+                                <li>Configure security groups</li>
+                                <li>Install dependencies</li>
+                                <li>Run with systemd service</li>
+                                <li>Set up nginx reverse proxy</li>
+                                <li>Configure SSL with Let's Encrypt</li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Section 4: Resources -->
+            <section>
+                <section>
+                    <h2>Part 4: Recipes & Resources</h2>
+                    <p style="font-size: 1.2em;">Ready-to-Use Templates and Where to Get Help</p>
+                </section>
+
+                <section>
+                    <h2>📦 Deployment Recipes</h2>
+                    <div class="highlight-box">
+                        <h4>🤗 Hugging Face Transformers Setup</h4>
+                        <pre><code class="language-bash code-small">#!/bin/bash
+# Quick setup for transformers
+module load python/3.10 cuda/11.8
+python -m venv hf_env
+source hf_env/bin/activate
+pip install torch transformers datasets accelerate
+pip install jupyter ipykernel
+python -m ipykernel install --user --name=hf_env</code></pre>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h4>📊 Data Science Stack</h4>
+                        <pre><code class="language-bash code-small">#!/bin/bash
+# Complete data science environment
+pip install pandas numpy scikit-learn matplotlib seaborn
+pip install jupyterlab plotly dash
+pip install xgboost lightgbm catboost</code></pre>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Common SLURM Templates</h2>
+                    <div class="two-column">
+                        <div class="column">
+                            <h4>Basic CPU Job</h4>
+                            <pre><code class="language-bash code-small">#!/bin/bash
+#SBATCH --job-name=analysis
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=04:00:00
+
+module load python/3.10
+python analysis.py</code></pre>
+                        </div>
+                        <div class="column">
+                            <h4>GPU Training Job</h4>
+                            <pre><code class="language-bash code-small">#!/bin/bash
+#SBATCH --job-name=train
+#SBATCH --gpus=1
+#SBATCH --mem=64G
+#SBATCH --time=24:00:00
+
+module load cuda/11.8
+source ~/env/bin/activate
+python train.py</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>🔗 Essential Links</h2>
+                    <div style="text-align: center;">
+                        <a href="https://docs.s3it.uzh.ch" class="resource-link">📚 S3IT Documentation</a>
+                        <a href="https://apps.s3it.uzh.ch" class="resource-link">🚀 ScienceApps</a>
+                        <a href="https://cloud.science-it.uzh.ch" class="resource-link">☁️ ScienceCloud</a>
+                        
+                        <div style="margin-top: 40px;">
+                            <a href="https://github.com/uzh-dsi/s3it-recipes" class="resource-link">📦 Recipe Repository</a>
+                            <a href="https://www.zi.uzh.ch/en/teaching-and-research/science-it/computing/training.html" class="resource-link">🎓 Training Courses</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>📧 Getting Help</h2>
+                    <div class="highlight-box">
+                        <h3>S3IT Support</h3>
+                        <p>Email: <a href="mailto:support@s3it.uzh.ch">support@s3it.uzh.ch</a></p>
+                        <p>Include: Job ID, error messages, what you tried</p>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h3>Office Hours</h3>
+                        <p>Every Wednesday, 14:00-16:00</p>
+                        <p>Virtual drop-in sessions via Zoom</p>
+                    </div>
+                    
+                    <div class="highlight-box">
+                        <h3>Community</h3>
+                        <p>UZH Research Computing Slack</p>
+                        <p>S3IT User Forum (monthly)</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>🎓 Recommended Training Path</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Level</th>
+                                <th>Course</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Beginner</td>
+                                <td>Introduction to S3IT Services</td>
+                                <td>2 hours</td>
+                            </tr>
+                            <tr>
+                                <td>Beginner</td>
+                                <td>Linux Command Line Basics</td>
+                                <td>4 hours</td>
+                            </tr>
+                            <tr>
+                                <td>Intermediate</td>
+                                <td>SLURM Job Management</td>
+                                <td>3 hours</td>
+                            </tr>
+                            <tr>
+                                <td>Intermediate</td>
+                                <td>Containers for Research</td>
+                                <td>4 hours</td>
+                            </tr>
+                            <tr>
+                                <td>Advanced</td>
+                                <td>GPU Programming with CUDA</td>
+                                <td>8 hours</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 20px;"><small>All courses available via <a href="https://zi-training.zi.uzh.ch">ZI Training Portal</a></small></p>
+                </section>
+            </section>
+
+            <!-- Best Practices Summary -->
+            <section>
+                <h2>Key Takeaways</h2>
+                <div style="text-align: left; margin: 0 auto; width: 90%;">
+                    <div class="success-box">
+                        <h4>✅ Do's</h4>
+                        <ul>
+                            <li>Start with ScienceApps for quick prototyping</li>
+                            <li>Use containers for reproducibility</li>
+                            <li>Request resources appropriately (don't over-request)</li>
+                            <li>Back up your code with Git</li>
+                            <li>Clean up scratch space regularly</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <h4>❌ Don'ts</h4>
+                        <ul>
+                            <li>Don't run intensive jobs on login nodes</li>
+                            <li>Don't store important data only in scratch</li>
+                            <li>Don't share credentials or access tokens</li>
+                            <li>Don't ignore resource limits and quotas</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Q&A -->
+            <section>
+                <h1>Questions & Discussion</h1>
+                <div style="margin-top: 50px;">
+                    <p>📧 support@s3it.uzh.ch</p>
+                    <p>📚 docs.s3it.uzh.ch</p>
+                    <p>🚀 apps.s3it.uzh.ch</p>
+                </div>
+                <div style="margin-top: 50px;">
+                    <p><small>Thank you for attending!</small></p>
+                </div>
+            </section>
+
+            <!-- Appendix Slides -->
+            <section>
+                <section>
+                    <h2>Appendix: Additional Resources</h2>
+                </section>
+
+                <section>
+                    <h2>Troubleshooting Common Issues</h2>
+                    <div class="warning-box">
+                        <h4>Problem: "No space left on device"</h4>
+                        <p>Solution: Check quota with <code>quota -s</code>, clean temp files, or request more space</p>
+                    </div>
+                    <div class="warning-box">
+                        <h4>Problem: "CUDA out of memory"</h4>
+                        <p>Solution: Reduce batch size, use gradient accumulation, or request more GPU memory</p>
+                    </div>
+                    <div class="warning-box">
+                        <h4>Problem: Job stays pending</h4>
+                        <p>Solution: Check queue with <code>squeue</code>, reduce resource requests, or check maintenance schedule</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Example: Complete LLM Fine-tuning Pipeline</h2>
+                    <pre><code class="language-python code-small"># complete_pipeline.py
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    Trainer,
+    TrainingArguments,
+    DataCollatorForLanguageModeling
+)
+from datasets import load_dataset
+import torch
+
+# Load model and tokenizer
+model_name = "gpt2"
+model = AutoModelForCausalLM.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer.pad_token = tokenizer.eos_token
+
+# Load and prepare dataset
+dataset = load_dataset("text", data_files="your_data.txt")
+
+def tokenize_function(examples):
+    return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=512)
+
+tokenized_dataset = dataset.map(tokenize_function, batched=True)
+
+# Training arguments
+training_args = TrainingArguments(
+    output_dir="./results",
+    num_train_epochs=3,
+    per_device_train_batch_size=4,
+    gradient_accumulation_steps=4,
+    warmup_steps=500,
+    weight_decay=0.01,
+    logging_dir="./logs",
+    fp16=True,  # Use mixed precision
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    load_best_model_at_end=True,
+)
+
+# Create trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=tokenized_dataset["train"],
+    tokenizer=tokenizer,
+    data_collator=DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False),
+)
+
+# Train
+trainer.train()
+
+# Save model
+trainer.save_model("./fine_tuned_model")</code></pre>
+                </section>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/zoom/zoom.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.3.1/plugin/search/search.js"></script>
+    
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'slide',
+            
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealZoom, RevealSearch ],
+            
+            // Optional configuration
+            controlsLayout: 'bottom-right',
+            controlsBackArrows: 'visible',
+            slideNumber: 'c/t',
+            showSlideNumber: 'all',
+            
+            // Presentation size
+            width: 1200,
+            height: 700,
+            
+            // Factor of the display size that should remain empty around the content
+            margin: 0.05,
+            
+            // Bounds for smallest/largest possible scale to apply to content
+            minScale: 0.2,
+            maxScale: 2.0
+        });
+    </script>
+</body>
+</html>
