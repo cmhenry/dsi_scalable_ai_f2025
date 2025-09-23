@@ -31,6 +31,8 @@
             border-radius: 10px;
             margin: 20px 0;
             border-left: 4px solid #3498db;
+            font-size: 70%;
+            line-height: 1.05;
         }
         .warning-box {
             background: #fff5f5;
@@ -38,6 +40,8 @@
             border-radius: 10px;
             margin: 20px 0;
             border-left: 4px solid #e74c3c;
+            font-size: 70%;
+            line-height: 1.05;
         }
         .success-box {
             background: #f0fff4;
@@ -45,6 +49,8 @@
             border-radius: 10px;
             margin: 20px 0;
             border-left: 4px solid #27ae60;
+            font-size: 70%;
+            line-height: 1.05;
         }
         .code-small {
             font-size: 0.8em !important;
@@ -98,6 +104,19 @@
             padding: 10px;
             border: 1px solid #ddd;
         }
+
+        p {
+            margin-top: 0.2em;   /* or 0 */
+            margin-bottom: 0.2em;
+            line-height: 1.1;    /* controls spacing inside a multi-line <p> */
+            font-size: 70%;
+        }
+        li {
+            margin-top: 0.1em;   /* or 0 */
+            margin-bottom: 0.1em;
+            line-height: 1.1;    /* controls spacing inside a multi-line <li> */
+            font-size: 70%;
+        }
     </style>
 </head>
 <body>
@@ -105,17 +124,60 @@
         <div class="slides">
             
             <!-- Title Slide -->
-            <section>
-                <h1>Best Practices in Deploying AI at Scale</h1>
-                <h3>A Practical Workshop on S3IT Infrastructure</h3>
+            <section data-background-image="./slide1-bg.png"
+                    data-background-size="100% 100%"
+                    data-background-position="center"
+                    data-background-repeat="no-repeat">
+                <h1 style="color: #ffffff">Best Practices in Deploying AI at Scale</h1>
+                <h3 style="color: #ffffff">A Practical Workshop on S3IT Infrastructure</h3>
                 <p style="margin-top: 50px;">
-                    <small>University of Zurich<br>
+                    <small style="color: #ffffff">University of Zurich<br>
                     Colin Henry, PhD <br>
                     Maël Kubli, PhD</small>
                 </p>
                 <!-- <p style="margin-top: 30px;">
                     <small>Duration: 45 minutes + Q&A</small>
                 </p> -->
+            </section>
+
+             <section>
+                <div style="display: flex; align-items: center;">
+                    <!-- Left column (text) -->
+                     <div style="flex: 1; padding: 40px; background: white;">
+                        <h2 style="margin-top:0; text-align: left;">The DSI<br>Community Democracy</h2>
+                        <ul>
+                            <li><strong>DSI:</strong> Digital Society Initiative</li>
+                            <li><strong>Community Democracy:</strong> Benefits &amp; risks of digitalization for democracy and society
+                                <ul>                            
+                                    <li>Interdisciplinary research &amp; projects</li>
+                                    <li>Outreach to stakeholders &amp; the broader public</li>
+                                    <li>Development of practical approaches &amp; solutions</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Right column (image) -->
+                    <div style="flex: 1;">
+                        <img src="./slide2-sidepic.png"
+                             alt="Community Democracy"
+                             style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div style="display: flex; align-items: center;">
+                    <!-- LEFT: white text panel -->
+                    <div style="flex:1; padding:0; background:#fff;">
+                        <h2 class="title">Projects &amp; Events</h2>
+                        <img src="slide-3-left.png" alt="" style="width:70%; height:70%; object-fit:contain; display:block;">
+                    </div>
+
+                    <!-- RIGHT: full-height image -->
+                    <div style="flex:1; position:relative; overflow:hidden;">
+                        <img src="network.png" alt="" style="object-fit:contain;">
+                    </div>
+                </div>
             </section>
 
             <!-- Agenda -->
@@ -217,8 +279,8 @@
                         <p>Fill out the access request form</p>
                         <p>Specify your research needs</p>
                     </div>
-                    <div class="highlight-box">
-                        <h3>3️⃣ Wait for Approval</h3>
+                    <div class="highlight-box"">
+                        <h3>3️⃣ Wait for Approval</h3>x
                         <p>Usually 1-2 business days</p>
                         <p>You'll receive credentials via email</p>
                     </div>
@@ -403,6 +465,8 @@ singularity shell --nv tensorflow_latest-gpu.sif
                             <li>tensorflow/tensorflow</li>
                             <li>pytorch/pytorch</li>
                             <li>huggingface/transformers-pytorch-gpu</li>
+                            <li>unsloth/unsloth</li>
+                            <li>ggml-org/llama.cpp</li>
                         </ul>
                     </div>
                 </section>
