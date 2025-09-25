@@ -22,6 +22,8 @@ This hands-on workshop introduces practical approaches for integrating AI into y
 - **Practical Examples** - From Jupyter notebooks to production deployments
 - **Ready-to-Use Templates** - Take home working code and configurations
 
+**Workshop slides:** <a href="https://github.com/cmhenry/dsi_scalable_ai_f2025/presentation.html">Presentation</a>
+
 ---
 
 ### Workshop Content
