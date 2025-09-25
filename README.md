@@ -112,8 +112,6 @@ After the workshop, you can immediately start using S3IT services:
 
 #### Get Help
 - 📧 **Email:** support@s3it.uzh.ch
-- 💬 **Office Hours:** Wednesdays 14:00-16:00 (virtual)
-- 👥 **Community:** UZH Research Computing Slack
 
 ---
 
@@ -131,7 +129,7 @@ University of Zurich
 
 ### 📅 Upcoming Events
 
-Stay tuned for more DSI AI Meetups! Check the [DSI website](https://www.dsi.uzh.ch) for announcements.
+Stay tuned for more DSI events! Check the [DSI website](https://www.dsi.uzh.ch) for announcements.
 
 ---
 
