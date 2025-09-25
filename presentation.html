@@ -393,7 +393,7 @@ ssh -l shortname cluster.s3it.uzh.ch
 
 # 2. Load required modules
 module load python/3.10
-module load cuda/11.8
+module load cuda/11.8.0
 
 # 3. Create virtual environment
 python -m venv llm_env
@@ -450,7 +450,7 @@ sbatch train_llm.sh</code></pre>
                 <section>
                     <h3>Option B: Using Docker Containers</h3>
                     <pre><code class="language-bash"># On ScienceCluster
-module load singularity
+module load singularityce
 
 # Pull a pre-built ML container
 singularity pull docker://tensorflow/tensorflow:latest-gpu
@@ -511,10 +511,10 @@ cd ~
 # Limited to 100GB by default
 
 # Project storage (request via ticket)
-cd /srv/beegfs/projects/your_project/
+cd /shares/your_project/
 
 # Scratch space for temporary large files
-cd /srv/beegfs/scratch/users/your_username/
+cd /scratch/your_username/
 
 # Check your quotas
 quota -s</code></pre>
